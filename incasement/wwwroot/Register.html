@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>用户注册</title>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+    <!-- 引入样式 -->
+    <link href="https://cdn.bootcss.com/element-ui/2.8.2/theme-chalk/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/log.css" />
+    <!-- 引入组件库 -->
+    <script src="https://cdn.bootcss.com/element-ui/2.8.2/index.js"></script>
+</head>
+<body>
+    <div class="main1" v-cloak>
+        <img src="images/logo.png" />
+        <el-button type="danger" round @click="open">登录</el-button>
+    </div>
+    <div class="footer"></div>
+    <div class="main_img"><img src="images/logo.png" /></div>
+    <div class="Log main2" v-cloak>
+        <el-card shadow="hover">
+            <div slot="header" class="clearfix">
+                <span><b>用户注册</b></span>
+            </div>
+            <el-form :model="regForm" status-icon :rules="rules2" ref="regForm">
+                <el-form-item prop="user">
+                    <el-input v-model="regForm.user" autocomplete="off" placeholder="用户名"></el-input>
+                </el-form-item>
+                <el-form-item prop="pass">
+                    <el-input type="password" v-model="regForm.pass" autocomplete="off" placeholder="密码"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button id="btn_log" type="primary" @click="submitForm('regForm')">注册</el-button>
+                    <el-button id="btn_register" @click="openLog()">已有账号</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
+    </div>
+</body>
+</html>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.min.js"></script>
+<script src="js/reg.js"></script>
+
+
+

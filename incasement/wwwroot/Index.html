@@ -1,0 +1,455 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>首页</title>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+    <!-- 引入样式 -->
+    <link href="https://cdn.bootcss.com/element-ui/2.8.2/theme-chalk/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/indexstyle.css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <!-- 引入组件库 -->
+    <script src="https://cdn.bootcss.com/element-ui/2.8.2/index.js"></script>
+</head>
+<body>
+    <el-menu id="main2" default-active="2" class="el-menu-demo" mode="horizontal" v-cloak>
+        <el-menu-item index="1" class="guide_logo_item" @click="guidePath(0)"><img src="images/guide-logo.png" /></el-menu-item>
+        <el-menu-item index="2" @click="guidePath(1)">首页</el-menu-item>
+        <el-menu-item index="3" @click="guidePath(2)">功能介绍</el-menu-item>
+        <el-menu-item index="4" @click="guidePath(3)">方案中心</el-menu-item>
+        <el-submenu index="5" style="float:right">
+            <template slot="title">
+                欢迎您，{{getUserName()}}
+            </template>
+            <el-menu-item index="5-1" @click="guidePath(3)"><i class="fa fa-user-circle-o fa-lg"></i>&nbsp;&nbsp;方案中心</el-menu-item>
+            <el-menu-item index="5-2" @click="LogOut()"><i class="fa fa-power-off fa-lg"></i>&nbsp;&nbsp;&nbsp;退出登录</el-menu-item>
+        </el-submenu>
+    </el-menu>
+    <el-container id="main1" style="border: 1px solid #eee" v-cloak>
+        <el-aside width="380px" style="background-color: rgb(238, 241, 246)" v-loading="loading" element-loading-text="方案读取中" element-loading-background="rgba(242, 242, 242, 0.8)">
+            <div style="background-color:#ffffff; padding:13px;border-right:1px solid rgb(238, 241, 246);border-bottom:1px solid rgb(238, 241, 246);">
+                <i class="fa fa-server fa-lg"></i>&nbsp;&nbsp;
+                <b>方案管理</b>
+                <el-tooltip class="item" effect="light" content="添加新方案" placement="right">
+                    <el-button circle plain icon="el-icon-plus" @click="btn_addProgram()" size="mini" style="float:right;"></el-button>
+                </el-tooltip>
+                <el-dialog id="main_add" :visible.sync="addDialogVisible" width="50%">
+                    <span slot="title">
+                        <i class="el-icon-edit-outline"></i>添加新方案
+                    </span>
+                    <el-form :model="container" ref="container" class="demo-dynamic" label-position="top" size="mini" :rules="rules1">
+                        <el-form-item>
+                            <template slot="label">
+                                <el-tooltip content="选择标准集装箱尺寸" placement="top" effect="light">
+                                    <el-dropdown @command="handleCommand" placement="bottom">
+                                        <span>
+                                            <font>
+                                                箱型<i class="el-icon-arrow-down"></i>
+                                            </font>
+                                        </span>
+                                        <el-dropdown-menu slot="dropdown">
+                                            <el-dropdown-item command="1">20'GP(20尺柜)</el-dropdown-item>
+                                            <el-dropdown-item command="2">40'GP(40尺柜)</el-dropdown-item>
+                                            <el-dropdown-item command="3">40'HQ(40尺高柜)</el-dropdown-item>
+                                            <el-dropdown-item command="4">45'HQ(45尺高柜)</el-dropdown-item>
+                                            <el-dropdown-item command="5">20'OT(20尺开顶柜)</el-dropdown-item>
+                                            <el-dropdown-item command="6">40'OT(40尺开顶柜)</el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </el-dropdown>
+                                </el-tooltip>
+                            </template>
+                            <el-row :gutter="20">
+                                <el-col :span="6">
+                                    <el-form-item prop="length">
+                                        <el-input v-model.number="container.length" placeholder="长/毫米" autocomplete="off"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-form-item prop="width">
+                                        <el-input v-model.number="container.width" placeholder="宽/毫米"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-form-item prop="height">
+                                        <el-input v-model.number="container.height" placeholder="高/毫米"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-form-item prop="weight">
+                                        <el-input v-model.number="container.weight" placeholder="配重/吨"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item>
+                        <el-form-item v-for="(cargo, index) in cargos"
+                                      :label="'货物' + (index+1)"
+                                      :key="cargo.key">
+                            <el-row :gutter="20">
+                                <el-col :span="4">
+                                    <el-form-item>
+                                        <el-input v-model.number="cargo.length" placeholder="长/毫米"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-form-item>
+                                        <el-input v-model.number="cargo.width" placeholder="宽/毫米"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-form-item>
+                                        <el-input v-model.number="cargo.height" placeholder="高/毫米"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-form-item>
+                                        <el-input v-model.number="cargo.weight" placeholder="重量/吨"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-form-item>
+                                        <el-input-number v-model="cargo.num" size="mini" :min="1" :max="1000000"></el-input-number>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="3">
+                                    <el-form-item>
+                                        <el-button type="danger" icon="el-icon-delete" circle @click.prevent="removeCargo(cargo)"></el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item>
+                        <el-form-item label="选择算法">
+                            智能选择：
+                            <el-tooltip :content="switchstatus" placement="top" effect="light">
+                                <el-switch v-model="switch_change"
+                                           inactive-color="#ff4949"
+                                           @change="changeSwitch()">
+                                </el-switch>
+                            </el-tooltip>
+                            &nbsp;&nbsp;&nbsp;
+                            <el-popover placement="right"
+                                        title="智能选择"
+                                        width="100"
+                                        trigger="hover">
+                                <template>
+                                    开启智能选择，系统将会按照您输入的问题规模选择合适的算法进行计算。
+                                    <br />
+                                    您也可以关闭该按钮，手动选择算法。
+                                </template>
+                                <i class="el-icon-question" slot="reference"></i>
+                            </el-popover>
+                            &nbsp;&nbsp;&nbsp;
+                            <el-radio-group v-model="radio_num" size="mini" :disabled="radio_open">
+                                <el-tooltip effect="light" content="剩余空间最优化算法" placement="top">
+                                    <el-radio label="1" border>RSO</el-radio>
+                                </el-tooltip>
+                                <el-tooltip effect="light" content="遗传算法" placement="top">
+                                    <el-radio label="2" border>GA</el-radio>
+                                </el-tooltip>
+                                <el-tooltip effect="light" content="连续HopField神经网络" placement="top">
+                                    <el-radio label="3" border>CHNN</el-radio>
+                                </el-tooltip>
+                                <el-tooltip effect="light" content="混合遗传模拟退火算法" placement="top">
+                                    <el-radio label="4" border>HGSAA</el-radio>
+                                </el-tooltip>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item prop="name" label="方案名称">
+                            <el-col :span="8" push="8">
+                                <el-input v-model.number="container.name" placeholder="为您的方案取个名字" autocomplete="off"></el-input>
+                            </el-col>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="addProgram('container')">计算</el-button>
+                            <el-button @click="addCargo">新增货物</el-button>
+                            <el-button @click="resetForm('container')">重置</el-button>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer" style="text-align:right">
+                        <el-popover placement="top"
+                                    width="160"
+                                    v-model="load_open">
+                            <div style="text-align:center">
+                                <el-upload action="" ref="excel-upload" :limit="1" :on-change="handleChange" show-file-list="false" :auto-upload="false">
+                                    <el-button size="small" type="primary">导入数据</el-button>
+                                    <div slot="tip" class="el-upload__tip">只能导入xls/xlsx文件</div>
+                                </el-upload>
+                            </div>
+                            <el-button type="warning" size="mini" slot="reference"><i class="el-icon-upload2"></i>Excel数据导入</el-button>
+                        </el-popover>
+                        <el-button type="warning" size="mini" @click="getLoadTemplate()"><i class="el-icon-download"></i>导入模板下载</el-button>
+                    </div>
+                </el-dialog>
+
+            </div>
+            <el-menu id="p_menu" unique-opened="true">
+                <el-menu-item-group>
+                    <template slot="title">
+                        已完成方案
+                    </template>
+                    <el-submenu v-for="(p_item, index) in p_items" :index="p_ID[index]">
+                        <template slot="title">
+                            <i class="el-icon-tickets"></i>
+                            {{p_name[index]}}&nbsp;方案&nbsp;
+                            <font size="1" style="color:#b3afaf">{{p_date[index]}}</font>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <i class="el-icon-news" :style="getBadgeValue(index)"></i>
+                        </template>
+                        <el-menu-item-group title="方案查看">
+                            <el-menu-item @click="openDetailProgram(p_item,index)">
+                                <i class="el-icon-view"></i>
+                                查看方案详情
+                            </el-menu-item>
+                            <el-menu-item style="color:#67C23A" @click="drawProgram(p_item,index)">
+                                <i class="el-icon-document"></i>
+                                查看装箱模型
+                            </el-menu-item>
+                            <el-menu-item style="color:#E6A23C" @click="animateProgram(p_item,index)">
+                                <i class="el-icon-date"></i>
+                                查看装箱过程
+                            </el-menu-item>
+                            <el-menu-item style="color:#F56C6C" @click="delProgram(index)">
+                                <i class="el-icon-delete"></i>
+                                删除该方案
+                            </el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group title="箱型">
+                            <el-menu-item style="color:#4c3971">
+                                长:{{p_item.containers[0]._true_length}}mm&nbsp;宽:{{p_item.containers[0]._true_width}}mm&nbsp;高:{{p_item.containers[0]._true_height}}mm&nbsp;配重:{{p_item.containers[0].weight}}t
+                            </el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group title="货物类型">
+                            <el-submenu :index="p_ID[index]+'-1'">
+                                <template slot="title">
+                                    <i class="fa fa-th-list fa-lg"></i>&nbsp;&nbsp;&nbsp;货物列表
+                                </template>
+                                <el-menu-item-group v-for="p_cargonum in p_item.cargos_num">
+                                    <div slot="title">
+                                        <i class="el-icon-menu"></i>
+                                        货物{{p_cargonum.type}}&nbsp;&nbsp;
+                                        数量:{{p_cargonum.num}}个
+                                    </div>
+                                    <el-menu-item :style="'color:'+cargoColor(p_cargonum.type)">
+                                        长:{{p_cargonum.length}}mm&nbsp;
+                                        宽:{{p_cargonum.width}}mm&nbsp;
+                                        高:{{p_cargonum.height}}mm&nbsp;
+                                        重量:{{p_cargonum.weight}}t
+                                    </el-menu-item>
+                                </el-menu-item-group>
+                            </el-submenu>
+                        </el-menu-item-group>
+                    </el-submenu>
+                </el-menu-item-group>
+                <el-menu-item-group title="计算中方案">
+                    <el-submenu v-for="(c_item,index) in c_items" id="cal_submenu">
+                        <template slot="title">
+                            <i class="el-icon-loading"></i>{{c_item.name}}&nbsp;方案
+                            <font size="1" style="color:#b3afaf">方案设计中，请稍后..</font>
+                        </template>
+                    </el-submenu>
+                </el-menu-item-group>
+            </el-menu>
+        </el-aside>
+
+        <el-dialog id="dialog_programinfo" :visible.sync="programinfo.visible" width="80%" center>
+            <span slot="title">
+                <i class="el-icon-view"></i>&nbsp;{{programinfo.name}}&nbsp;方案详情
+            </span>
+            <div>
+                <div class="pi_info">
+                    <el-row style="border-bottom:1px solid #E4E7ED">
+                        <el-col :span="12">
+                            <font style="font-size:14px"><b>所用算法：</b>{{programinfo.OA}}</font>
+                        </el-col>
+                        <el-col :span="12">
+                            <font style="font-size:14px"><b>方案总使用箱数：</b>{{programinfo.Container_num}}个</font>
+                        </el-col>
+                    </el-row>
+                    <el-row v-for="(c_item,c_index) in programinfo.containers" style="border:1px solid #F2F6FC">
+                        <el-col :span="12">
+                            <font style="font-size:13px"><b>箱{{c_index+1}}利用率：</b>{{(c_item.useratio*100).toFixed(2)}}%</font>
+                        </el-col>
+                        <el-col :span="12">
+                            <font style="font-size:13px"><b>箱{{c_index+1}}载重：</b>{{c_item.loadweight.toFixed(3)}}吨/{{c_item.weight.toFixed(3)}}吨</font>
+                        </el-col>
+                    </el-row>
+                </div>
+                <br />
+                <div style="box-shadow: 0 2px 4px rgba(0, 0, 0, .12);width:80%;padding-top:10px;padding-bottom:10px;text-align:center;left: 0;right: 0;margin: 0 auto;">
+                    <font style="font-size:20px;font-weight:600;">方案数据分析</font>
+                </div>
+                <div id="pi_1_1" class="chart_main">
+                </div>
+                <div id="pi_1_2" class="chart_main">
+                </div>
+                <div class="chart_container" v-for="(item,index) in programinfo.containers" :id="'pi_'+(index+2)">
+                </div>
+                <div id="pi_allcargo" class="chart_cargo">
+                </div>
+                <div class="chart_weight_temp"></div>
+                <div id="pi_weight" class="chart_weight">
+                </div>
+                <div class="chart_weight_temp"></div>
+            </div>
+            <div slot="footer">
+                <el-button plain size="mini" @click="programinfo.visible=false" style="visibility:hidden">关闭</el-button>
+            </div>
+        </el-dialog>
+
+        <el-container>
+            <el-header id="Draw_title" style="font-size: 13px;" class="drawiframe_close">
+                <el-popover placement="right" trigger="click"
+                            width="300"
+                            v-model="visibletitle1">
+                    <div>
+                        <p style="text-align:left;padding:13px;">
+                            <span style="font-size:18px;color:#606266"><i class="fa fa-th"></i>&nbsp;&nbsp;可视化装箱模型</span>
+                            <br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{p_name[export_excel_program.index]}} 方案
+                        </p>
+                        <p style="text-align:left;color:#C0C4CC">
+                            <i class="el-icon-thumb"></i>可使用不同手势放缩、拖曳和旋转模型
+                        </p>
+                        <p style="text-align:left;">
+                            <span style="color:#F56C6C"><i class="el-icon-location-outline"></i>红轴表示X轴<br /></span>
+                            <span style="color:#67C23A"><i class="el-icon-location-outline"></i>绿轴表示Y轴<br /></span>
+                            <span style="color:#409EFF"><i class="el-icon-location-outline"></i>蓝轴表示Z轴</span>
+                        </p>
+                        <p style="text-align:left" class="btn_screenshot">
+                            <el-button-group>
+                                <el-button type="info" size="mini" @click="cameraAngle(3)" plain>正视</el-button>
+                                <el-button type="info" size="mini" @click="cameraAngle(4)" plain>俯视</el-button>
+                                <el-button type="info" size="mini" @click="cameraAngle(5)" plain>侧视</el-button>
+                            </el-button-group>
+                        </p>
+                        <p style="text-align:left" class="btn_screenshot">
+                            <el-button-group>
+                                <el-button type="warning" size="mini" @click="exportExcel()"><i class="fa fa-file-excel-o"></i>&nbsp;导出csv文件</el-button>
+                                <el-button type="warning" size="mini" @click="screenshot()"><i class="el-icon-download"></i>生成装箱图</el-button>
+                            </el-button-group>
+                        </p>
+                    </div>
+                    <el-button slot="reference" type="text" class="el-title-s" style="font-size:24px;color:black"><i class="fa fa-bars"></i></el-button>
+                </el-popover>
+                <transition name="el-zoom-in-center">
+                    <el-row :gutter="2" style="text-align:center" v-show="show_Draw" class="el-title-l">
+                        <el-col :span="6" style="text-align:left;padding:13px;">
+                            <span style="font-size:18px;color:#606266"><i class="fa fa-th"></i>&nbsp;&nbsp;可视化装箱模型</span><br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{p_name[export_excel_program.index]}} 方案
+                        </el-col>
+                        <el-col :span="3" style="text-align:left;color:#C0C4CC">
+                            <i class="el-icon-caret-left"></i>鼠标左键旋转<br />
+                            <i class="el-icon-caret-right"></i>鼠标右键平移<br />
+                            <i class="el-icon-d-caret"></i>鼠标滚轮放缩
+                        </el-col>
+                        <el-col :span="3">
+                            <span style="color:#F56C6C"><i class="el-icon-location-outline"></i>红轴表示X轴<br /></span>
+                            <span style="color:#67C23A"><i class="el-icon-location-outline"></i>绿轴表示Y轴<br /></span>
+                            <span style="color:#409EFF"><i class="el-icon-location-outline"></i>蓝轴表示Z轴</span>
+                        </el-col>
+                        <el-col class="btn_screenshot" :span="6">
+                            <el-button-group>
+                                <el-button type="info" size="mini" @click="cameraAngle(3)" plain>正视</el-button>
+                                <el-button type="info" size="mini" @click="cameraAngle(4)" plain>俯视</el-button>
+                                <el-button type="info" size="mini" @click="cameraAngle(5)" plain>侧视</el-button>
+                            </el-button-group>
+                        </el-col>
+                        <el-col style="text-align:right" class="btn_screenshot" :span="6">
+                            <el-button-group>
+                                <el-button type="warning" size="mini" @click="exportExcel()"><i class="fa fa-file-excel-o"></i>&nbsp;导出csv文件</el-button>
+                                <el-button type="warning" size="mini" @click="screenshot()"><i class="el-icon-download"></i>生成装箱图</el-button>
+                            </el-button-group>
+                        </el-col>
+                    </el-row>
+                </transition>
+            </el-header>
+
+            <el-header id="Animate_title" style="font-size: 13px;float:inherit" class="drawiframe_close">
+                <el-popover placement="right" trigger="click"
+                            width="300"
+                            v-model="visibletitle">
+                    <div>
+                        <p style="text-align:left;padding:13px;">
+                            <span style="font-size:18px;color:#606266"><i class="fa fa-th"></i>&nbsp;&nbsp;装箱过程</span>
+                            <br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{p_name[export_excel_program.index]}} 方案
+                        </p>
+                        <p style="text-align:left;color:#C0C4CC">
+                            <i class="el-icon-thumb"></i>可使用不同手势放缩、拖曳和旋转模型
+                        </p>
+                        <p style="text-align:left;">
+                            <span style="color:#F56C6C"><i class="el-icon-location-outline"></i>红轴表示X轴<br /></span>
+                            <span style="color:#67C23A"><i class="el-icon-location-outline"></i>绿轴表示Y轴<br /></span>
+                            <span style="color:#409EFF"><i class="el-icon-location-outline"></i>蓝轴表示Z轴</span>
+                        </p>
+                        <p style="text-align:left" class="btn_screenshot">
+                            <el-button-group>
+                                <el-button type="info" size="mini" @click="cameraAngle(3)" plain>正视</el-button>
+                                <el-button type="info" size="mini" @click="cameraAngle(4)" plain>俯视</el-button>
+                                <el-button type="info" size="mini" @click="cameraAngle(5)" plain>侧视</el-button>
+                            </el-button-group>
+                        </p>
+                        <p style="text-align:left" class="btn_screenshot">
+                            <el-button-group>
+                                <el-button-group>
+                                    <el-button type="warning" size="mini" @click="animateStart()"><i class="fa fa-pause" v-show="animateplay"></i><i class="fa fa-play" v-show="!animateplay"></i>&nbsp;开始/暂停</el-button>
+                                    <el-button type="warning" size="mini" @click="animateBack()"><i class="fa fa-backward"></i>&nbsp;回退</el-button>
+                                </el-button-group>
+                            </el-button-group>
+                        </p>
+                    </div>
+                    <el-button slot="reference" type="text" class="el-title-s" style="font-size:24px;color:black"><i class="fa fa-bars"></i></el-button>
+                </el-popover>
+                <transition name="el-zoom-in-center">
+                    <el-row :gutter="6" style="text-align:center" v-show="show_Animate" class="el-title-l">
+                        <el-col :span="6" style="text-align:left;padding:13px;">
+                            <span style="font-size:18px;color:#606266"><i class="fa fa-th"></i>&nbsp;&nbsp;装箱过程</span><br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{p_name[export_excel_program.index]}} 方案
+                        </el-col>
+                        <el-col :span="3" style="text-align:left;color:#C0C4CC">
+                            <i class="el-icon-caret-left"></i>鼠标左键旋转<br />
+                            <i class="el-icon-caret-right"></i>鼠标右键平移<br />
+                            <i class="el-icon-d-caret"></i>鼠标滚轮放缩
+                        </el-col>
+                        <el-col :span="3">
+                            <span style="color:#F56C6C"><i class="el-icon-location-outline"></i>红轴表示X轴<br /></span>
+                            <span style="color:#67C23A"><i class="el-icon-location-outline"></i>绿轴表示Y轴<br /></span>
+                            <span style="color:#409EFF"><i class="el-icon-location-outline"></i>蓝轴表示Z轴</span>
+                        </el-col>
+                        <el-col :span="6" class="btn_screenshot">
+                            <el-button-group>
+                                <el-button type="info" size="mini" @click="cameraAngle(3)" plain>正视</el-button>
+                                <el-button type="info" size="mini" @click="cameraAngle(4)" plain>俯视</el-button>
+                                <el-button type="info" size="mini" @click="cameraAngle(5)" plain>侧视</el-button>
+                            </el-button-group>
+                        </el-col>
+                        <el-col :span="6" style="text-align:right" class="btn_screenshot">
+                            <el-button-group>
+                                <el-button type="warning" size="mini" @click="animateStart()"><i class="fa fa-pause" v-show="animateplay"></i><i class="fa fa-play" v-show="!animateplay"></i>&nbsp;开始/暂停</el-button>
+                                <el-button type="warning" size="mini" @click="animateBack()"><i class="fa fa-backward"></i>&nbsp;回退</el-button>
+                            </el-button-group>
+                        </el-col>
+                    </el-row>
+                </transition>
+            </el-header>
+
+            <el-main style="background:url('images/logo.png') no-repeat center center;background-size:30%;">
+                <transition name="el-zoom-in-center">
+                    <iframe id="Draw" src="Draw.html" ref="drawiframe" frameborder="no" border="0" scrolling="no"></iframe>
+                </transition>
+            </el-main>
+        </el-container>
+    </el-container>
+    <footer class="footer">
+        We recommend to use Google Chrome&nbsp;
+        <i class="fa fa-chrome"></i>.
+        <br />
+        © All Rights Reserved.
+    </footer>
+</body>
+</html>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+<script src="https://cdn.bootcss.com/xlsx/0.14.2/xlsx.core.min.js"></script>
+<script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts.min.js"></script>
+<script src="js/main.js"></script>

@@ -1,0 +1,410 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>功能介绍</title>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+    <!-- 引入样式 -->
+    <link href="https://cdn.bootcss.com/element-ui/2.8.2/theme-chalk/index.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/amazeui/2.7.2/css/amazeui.min.css" rel="stylesheet">
+    <link href="css/prism.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/indexstyle.css" />
+    <style>
+        .el-main {
+            padding-top: 2%;
+            padding-left: 5%;
+            padding-right: 5%;
+            font-size: 20px;
+            color: #000000;
+            background-color: rgba(255, 255, 255,0.8)
+        }
+
+            .el-main span {
+                font-size: 18px;
+                color: #606266
+            }
+
+            .el-main p {
+                padding-bottom: 2%;
+                color: #303133;
+                font-size: 22px;
+                font-weight: 800;
+            }
+
+        .div_image {
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+    <!-- 引入组件库 -->
+    <script src="https://cdn.bootcss.com/element-ui/2.8.2/index.js"></script>
+</head>
+<body>
+    <el-menu id="main2" default-active="3" class="el-menu-demo" mode="horizontal" v-cloak>
+        <el-menu-item index="1" class="guide_logo_item" @click="guidePath(0)"><img src="images/guide-logo.png" /></el-menu-item>
+        <el-menu-item index="2" @click="guidePath(1)">首页</el-menu-item>
+        <el-menu-item index="3" @click="guidePath(2)">功能介绍</el-menu-item>
+        <el-menu-item index="4" @click="guidePath(3)">方案中心</el-menu-item>
+        <el-submenu index="5" style="float:right">
+            <template slot="title">
+                欢迎您，{{getUserName()}}
+            </template>
+            <el-menu-item index="5-1" @click="guidePath(3)"><i class="fa fa-user-circle-o fa-lg"></i>&nbsp;&nbsp;方案中心</el-menu-item>
+            <el-menu-item index="5-2" @click="LogOut()"><i class="fa fa-power-off fa-lg"></i>&nbsp;&nbsp;&nbsp;退出登录</el-menu-item>
+        </el-submenu>
+    </el-menu>
+    <el-container id="main1" style="border: 1px solid #eee" v-cloak>
+        <el-aside width="300px" style="background-color: rgb(238, 241, 246)">
+            <el-menu default-active="1">
+                <el-menu-item @click="changeText(1)" index="1">
+                    <template slot="title">
+                        <span><i class="fa fa-columns"></i>&nbsp;&nbsp;网站简介</span>
+                    </template>
+                </el-menu-item>
+                <el-menu-item @click="changeText(2)" index="2">
+                    <template slot="title">
+                        <span><i class="fa fa-dot-circle-o"></i>&nbsp;&nbsp;剩余空间最优化算法(RSO)</span>
+                    </template>
+                </el-menu-item>
+                <el-menu-item @click="changeText(3)" index="3">
+                    <template slot="title">
+                        <span><i class="fa fa-dot-circle-o"></i>&nbsp;&nbsp;遗传算法(GA)</span>
+                    </template>
+                </el-menu-item>
+                <el-menu-item @click="changeText(4)" index="4">
+                    <template slot="title">
+                        <span><i class="fa fa-dot-circle-o"></i>&nbsp;&nbsp;混合遗传模拟退火算法(HGSAA)</span>
+                    </template>
+                </el-menu-item>
+                <el-menu-item @click="changeText(5)" index="5">
+                    <template slot="title">
+                        <span><i class="fa fa-dot-circle-o"></i>&nbsp;&nbsp;连续HopField神经网络算法(CHNN)</span>
+                    </template>
+                </el-menu-item>
+            </el-menu>
+        </el-aside>
+        <el-container style="background:url('images/logo.png') no-repeat center center;background-size:30%;">
+            <el-main id="intro_1">
+                <p>网站简介</p>
+                <span>
+                    基于多种优化算法的智能装箱平台是一套在线装箱智能优化系统，适用于货柜装箱、集装箱拼箱、纸箱装箱包装等各种装箱方案的优化设计，并展示基于装箱数据的各类可视化图表。它致力于为客户提供高度优化的集装箱装箱方案，帮助客户提高在生产运输等各个环节的工作效率，同时能够有效降低企业运营成本。
+                    <br />
+                    <br />
+                    装箱平台致力于解决具有规则形状的货物在集装箱、箱式货车、包装箱中的最优摆放问题，帮助货主、货代和承运企业简单、快速的设计装箱方案。在任何地方都可以通过手机、平板、电脑来使用装箱平台云服务，为卡车、集装箱、高低板车设计配载方案。设计的方案可以很方便的在客户、销售人员、供应链管理人员、现场操作人员之间共享，协同工作。
+                    <br />
+                    <br />
+                    本系统通过多种智能算法（剩余空间最优化算法、混合遗传算法、混合遗传模拟退火算法、连续Hopfield神经网络）来解决三维装箱问题（3D-KLP），分别可以适应用户对算法速度、精度的不同要求。
+                    <br />
+                    <br />
+                    如果对算法速度有较高的要求，我们推荐使用剩余空间最优化算法。该算法能够快速高效求解，尤其适合应用在大规模的三维装箱问题中。
+                    若对精度有较高的要求，我们推荐使用遗传算法或是混合遗传模拟退火算法。这两个算法均适用于常见规模的问题，且能在一定时间下，达到高精度范围内的近似最优解。
+                    对于较小规模的问题，我们推荐使用Hopfield神经网络，该算法在时间以及迭代次数足够的情况下，能够达到最优解。
+                    <br />
+                    <br />
+                    若您依旧不清楚应选择何种算法进行计算，您可以开启智能选择功能，系统将会根据你输入的问题规模，选择最合适的算法进行求解。
+                </span>
+            </el-main>
+            <el-main class="el-main-intro" id="intro_2">
+                <el-tabs value="tab1" tab-position="right">
+                    <el-tab-pane label="算法介绍" name="tab1">
+                        <p>剩余空间最优化算法(RSO)</p>
+                        <span>
+                            三维剩余空间最优化算法(3D-RSO)能够在极短的时间内对算例进行高效求解，适合应用在大规模或者需要被快速求解的三维装箱问题中。
+                            <br />
+                            <br />
+                            剩余空间最优化算法是基于剩余空间分割方法和箱子布置规则所构建的启发式算法。该算法能够在不需要额外预处理和最优解搜索的情况下快速求解。
+                            当箱子的种类和数量特别巨大时，传统算法难于甚至于不能够在合适的时间内进行求解，其计算复杂度较高；
+                            另一方面，在以三维装箱为模型的实际应用中，经常出现“箱子”的删除、增加或者手动调整等情况，需要相关算法能够迅速相应。
+                            所以无论是学术研究还是工业实际，这种基于直接求解的快速算法都十分必要。
+                            为实现三维装箱问题的高效求解，在综合考虑剩余空间分割和箱子布置的前提 下，该算法借鉴二维 PH 算法的直接求解方式，
+                            提出了启发式的剩余空间最优化算法（Three-Dimensional Residual-Space Optimized Algorithm，简称 3D-RSO）。
+                            该算法在求解过程中不需要额外的预处理和最优解搜索操作，能够在极少的计算消耗下得到一个较优的解，相对于现阶段其他算法在求解效率上具有明显优势。
+                        </span>
+                    </el-tab-pane>
+                    <el-tab-pane label="算法流程" name="tab2">
+                        <p>剩余空间最优化算法(RSO)</p>
+                        <div class="div_image">
+                            <el-image key="intro2" src="images/intro2.png"></el-image>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="算法思想" name="tab3" style="background-color:rgba(255,255,255,1)">
+                        <p>剩余空间最优化算法(RSO)</p>
+                        <span>
+                            根据算法流程图，其中：
+                            <div class="div_image">
+                                <el-image key="intro2-1" src="images/intro2-1.png"></el-image>
+                            </div>
+                            上式中的各项符号的意义可参照下图所示的货物放置状态评价度示意图。
+                            <div class="div_image">
+                                <el-image key="intro2-2" src="images/intro2-2.png"></el-image>
+                            </div>
+                            对于分割方法，当一个货物被装入一个剩余空间中时，其所在空间可被分割为如下图所示的两种形式。
+                            <div class="div_image">
+                                <el-image key="intro2-3" src="images/intro2-3.png"></el-image>
+                                <el-image key="intro2-4" src="images/intro2-4.png"></el-image>
+                            </div>
+                            S1、S2、S3分别表示有各自高度的子空间，其中S1的高度为剩余空间高度减去货物高度，S2、S3的高度与剩余空间高度相等，为遵循剩余空间最优化策略，
+                            算法的分割思想为在每一次的空间分割中，都选择能够产生具有较大体积子空间的分割方式，即让较大体积的子空间尽可能大，较小体积的子空间尽可能小。
+                            如上图中，左图的切割方法就要优于右图的切割方法。
+                            <br />
+                            <br />
+                            采用上述的分割方法，在多次分割后，会出现有两个剩余子空间相邻，实际上能够装下一个较大的货物，但因为这两个子空间被分割开，算法将会认为无法装下的情况，
+                            为解决这一问题，本系统创新地引入了相邻剩余空间合并的方法。
+                            相邻剩余空间合并的核心思想是将两个相邻且相邻边分别相等的子空间合并为一个更大的子空间，或是将两个相邻但仅有一条相邻边相等的子空间进行重新分割，
+                            判断重新分割后得到的两个空间是否相对原子空间更满足较大体积的子空间尽可能大，较小体积的子空间尽可能小的剩余空间最优化策略，
+                            若满足这一策略，则接受重新分割后得到的子空间，否则保留原子空间。
+                            <br />
+                            <br />
+                            由于这一算法是后面三个算法的基础，因此为尽量提高算法的运行速度，本系统在算法的实现中使用了多线程技术，
+                            通过多线程，算法由原来的同一时间仅能对单个货箱进行装箱转变为能对多个货箱同时进行装箱。
+                            用一个货物规模为60的装箱方案进行测试，可以发现使用多线程后算法所用时间相较单线程减少了一半，极大地提升了算法的运行效率。
+                        </span>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-main>
+            <el-main class="el-main-intro" id="intro_3">
+                <el-tabs value="tab1" tab-position="right">
+                    <el-tab-pane label="算法介绍" name="tab1">
+                        <p>遗传算法(GA)</p>
+                        <span>
+                            混合遗传算法是基于3D-RSO算法和剩余空间合并算法的改进的遗传算法，能够在较快的时间内得到满意解，适用于各种规模的三维装箱问题。
+                            <br />
+                            <br />
+                            遗传算法采用了生物进化论的思想，通过自然选择和适者生存的竞争策略来进行求解，在求解优化问题中显示了优越的性能。GA的全局搜索性能较强，具有简单、通用、鲁棒性强的特点，但是在进化后期搜索效率较低，种群的进化缓慢，且容易出现早熟现象。
+                            <br />
+                            <br />
+                            研究表明，GA可以用极快的速度达到最优解的90%左右，但要达到真正的最优解则要花费相当长的时间。一些对比实验表明，如果兼顾收敛速度和解的品质两个指标，简单GA方法未必比其它搜索算法更好，解决这一问题的方法可考虑对简单GA进行适当改进，如增加交叉约束算子等。而目前较为活跃的研究领域是考虑GA与其它方法的集成， 即混合遗传算法。由于其寻找全局最优解的时间较长，因此，我们在基于3D-RSO算法和剩余空间合并算法的基础上，对遗传算法进行改进，通过设置合理的交叉和变异算子，对种群进行优化遗传，能在较快的时间内得到满意解。
+                        </span>
+                    </el-tab-pane>
+                    <el-tab-pane label="算法流程" name="tab2">
+                        <p>遗传算法(GA)</p>
+                        <div class="div_image">
+                            <el-image key="intro3" src="images/intro3.png"></el-image>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="算法思想" name="tab3" style="background-color:rgba(255,255,255,1)">
+                        <p>遗传算法(GA)</p>
+                        <span>
+                            由于三维装箱问题是一个具有复杂约束的组合优化问题，若要利用遗传算法进行直接求解，解的结构和解空间较难确定。
+                            为简化问题，可以将遗传算法分为两个部分，一是装箱函数，二是货物装箱序列。
+                            <br />
+                            <br />
+                            前文所述的RSO算法本质上是将一堆货物按照其可能产生的最大底面积降序排序得到一个货物装箱序列，即货物的装箱顺序，而后将该装箱序列带入RSO算法制定的装箱规则中，
+                            即可得到一个装箱方案。也就是说同样可将RSO算法分为两个部分，分别是装箱规则和一个装箱序列。
+                            因此将RSO算法中的装箱规则封装为装箱函数，接受装箱序列作为参数，只需提供一个装箱序列，该函数即可得到一个装箱方案。
+                            这样，对于遗传算法，就仅需对装箱序列进行优化，得到最优的装箱序列。
+                            <br />
+                            <br />
+                            本系统中将遗传算法的解结构设为一个元素为m个的列向量，m表示货物的总数，列向量中每个元素的值都是0-1之间的小数，
+                            该列向量表示其中值最小的元素所代表的货物第一个装载，次小值得元素代表得货物第二个装载…依此类推。
+                            通过这一处理，原来不连续的解空间转化为了连续的解空间，更方便操作。
+                            对于适应度值，根据解带入到装箱函数中得到的装箱方案数据，结合货箱使用数最小的目标，利用以下适应度函数求得适应度值。
+                            <div class="div_image">
+                                <el-image key="intro3-1" src="images/intro3-1.png"></el-image>
+                            </div>
+                            其中，N为使用箱子的个数，Fi为第i个箱子所装载货物的总体积，V为箱子的体积。
+                            根据适应度函数可以看出，适应度值越大，表示该方案越接近最优解。
+                            <br />
+                            <br />
+                            同时，经过多次试验，本系统将算法的种群规模设为30，迭代次数设为500，交叉算子选择单点交叉，变异算子选择单点变异。
+                            此外，由RSO算法，已知其货物装箱序列是一个较优的解，因此在初始解的生成时，将该解作为其中一个初始解，加快算法的收敛速度。
+                        </span>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-main>
+            <el-main class="el-main-intro" id="intro_4">
+                <el-tabs value="tab1" tab-position="right">
+                    <el-tab-pane label="算法介绍" name="tab1">
+                        <p>混合遗传模拟退火算法(HGSAA)</p>
+                        <span>
+                            混合遗传模拟退火算法，是基于遗传算法对解进行扰动，并通过分段式的降温函数，
+                            在减少算法运行时间的情况下，能在较高精度范围内达到近似最优解的全局优化算法，适用于各种规模的三维装箱问题。
+                            <br />
+                            <br />
+                            模拟退火算法源于对热力学中退火过程的模拟。
+                            在某一给定初始温度下，通过缓慢下降温度参数，使算法能够在多项式时间内给出一个近似最优解。
+                            它通过利用一个概率机制来控制解的接受（或更新） 过程，使得模拟退火算法有更多的机会逃离局部最优的“陷阱”，
+                            在一定程度上避免了其它局部搜索算法或梯度算法存在的缺陷。
+                            <br />
+                            <br />
+                            对于模拟退火算法而言，设置合理的降温过程是算法对速度与效果的关键所在。
+                            根据模拟退火算法收敛性理论，即降温函数应该选取比对数式收敛变化态势更慢的类型，才能保证算法依概率收敛到全局最优解。
+                            但对数式收敛的算法运行时间过长，具体实际中很难获得使用。
+                            同时，为了平衡SA算法的广域搜索能力和局部搜索能力，通常设置较高初始温度和较低终止温度。
+                            因此，为了加快算法的求解速度，我们选择将指数降温函数和对数降温函数相结合，构成分段式的降温函数，
+                            在减少算法的运行时间的基础上，使算法能够在一定的精度范围内较快速的搜索到近似最优解。
+                        </span>
+                    </el-tab-pane>
+                    <el-tab-pane label="算法流程" name="tab2">
+                        <p>混合遗传模拟退火算法(HGSAA)</p>
+                        <div class="div_image">
+                            <el-image key="intro4" src="images/intro4.png"></el-image>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="算法思想" name="tab3" style="background-color:rgba(255,255,255,1)">
+                        <p>混合遗传模拟退火算法(HGSAA)</p>
+                        <span>
+                            模拟退火算法源于对热力学中退火过程的模拟。
+                            在某一给定初始温度下，通过缓慢下降温度参数，并通过利用Metropolis准则的概率机制来控制解的接受（或更新）过程，
+                            使得模拟退火算法有更多的机会逃离局部最优的“陷阱”，从而使算法能够在多项式时间内给出一个近似最优解。
+                            Metropolis准则的接收函数为:
+                            <div class="div_image">
+                                <el-image key="intro4-1" src="images/intro4-1.png"></el-image>
+                            </div>
+                            其中，Ei表示当前时刻的能量值，将E的值定义为当前的解的适应度值，Ej表示新解的能量值。
+                            k为温度参数，通过多次试验我们将温度参数设为700。t为当前时刻的温度。
+                            <br />
+                            <br />
+                            对于模拟退火算法而言，设置合理的降温过程是算法对速度与效果的关键所在。
+                            为了平衡SA算法的广域搜索能力和局部搜索能力，通常设置较高初始温度和较低终止温度。
+                            在此，可以将初始温度设为500度，中止温度设为10度。
+                            为了在前期温度快速下降以跳出局部最优解，同时保证低温下可以进行缓慢搜索得到近似最优解，
+                            选择将指数降温函数和反比例降温函数相结合，构成分段式的降温函数:
+                            <div class="div_image">
+                                <el-image key="intro4-2" src="images/intro4-2.png"></el-image>
+                            </div>
+                            其中，x表示降温次数，α为两条曲线的交点，容易求得α约等于125。
+                            <div class="div_image">
+                                <el-image key="intro4-3" src="images/intro4-3.png"></el-image>
+                            </div>
+                            其中，蓝色曲线表示构造的反比例函数 f=500*(1/9x)，红色曲线表示所构造的指数函数 f=500*0.98^x。
+                            <br />
+                            <br />
+                            之后，使用前文所述的遗传算法来进行解的扰动。
+                            由于模拟退火算法后期解的变化较小，种群难以进化，因此将种群大小设置为70，其他参数与上述遗传算法一致。
+                        </span>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-main>
+            <el-main class="el-main-intro" id="intro_5">
+                <el-tabs value="tab1" tab-position="right">
+                    <el-tab-pane label="算法介绍" name="tab1">
+                        <p>连续HopField神经网络算法(CHNN)</p>
+                        <span>
+                            Hopfield神经网络通过神经动力学来映射生物神经网络，有可能找到真实最优解。
+                            但是由于其维度较高，目前仅适用于解决小规模的装箱问题。
+                            <br />
+                            <br />
+                            Hopfield网络作为一种全连接型的神经网络, 利用与阶层型神经网络不同的结构特征和学习方法,
+                            模拟生物神经网络的记忆机理, 在解决组合优化问题方面取得了很好的效果。
+                            同时，Hopfield神经网络比较依赖初始权值的设置，会受到初始输入状态和输出状态的随机性影响，不一定每一次都可以找到最优解，
+                            有可能找到的是不同的次优解。采用连续时间的 Hopfield 网络模型来求解TSP这样的NP难问题，开辟了一条解决这一问题的新途径。
+                            其基本思想是把 TSP 映射到 CHNN 上，通过网络状态的动态演化逐步趋向稳态而自动地搜索出最优解。
+                            而三维装箱问题通过转换，可以看成变种TSP问题，
+                            因此，我们尝试性地利用Hopfield神经网络来解决三维装箱问题（3D-KLP），并得到了较好的结果。
+                        </span>
+                    </el-tab-pane>
+                    <el-tab-pane label="算法流程" name="tab2">
+                        <p>连续HopField神经网络算法(CHNN)</p>
+                        <div class="div_image">
+                            <el-image key="intro5" src="images/intro5.png"></el-image>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="算法思想" name="tab3" style="background-color:rgba(255,255,255,1)">
+                        <p>连续HopField神经网络算法(CHNN)</p>
+                        <span>
+                            连续性HopField神经网络是一种反馈式的单层全连接递归网络，适用于处理组合优化问题。
+                            <br />
+                            <br />
+                            根据遗传算法中定义的货物装箱序列，我们可以将装箱问题视作无需返回的TSP变种问题。
+                            连续性HopField神经网络在TSP问题中有经典的实现方法，因此本系统对求解TSP问题的CHNN算法的能量函数进行改造，即可用于装箱问题的求解。
+                            <br />
+                            <br />
+                            将CHNN的神经元矩阵定义为一个m*m的二值矩阵NN，其中NNij表示第j个货物是否排在第i个装入货箱，其值为1表示是，值为0表示否。根据上述定义，该矩阵需同时满足每行有且仅有一个1和每列有且仅有一个1的约束。
+                            <br />
+                            <br />
+                            基于CHNN算法在TSP问题中的应用，可以得到利用HopField神经网络求解装箱问题的流程：
+                            <br />
+                            <br />
+                            （1）	设定迭代次数为700次。
+                            <br />
+                            （2）	利用以下公式初始化神经网络的输入状态：
+                            <div class="div_image">
+                                <el-image key="intro5-1" src="images/intro5-1.png"></el-image>
+                            </div>
+                            <div class="div_image">
+                                <el-image key="intro5-2" src="images/intro5-2.png"></el-image>
+                            </div>
+                            其中，U(t)表示t时刻的输入状态矩阵，U0为输入电压，设为0.002，n表示货物总数，δ为随机扰动项。
+                            <br />
+                            （3）	利用CHNN动态方程计算输入状态的增量：
+                            <div class="div_image">
+                                <el-image key="intro5-3" src="images/intro5-3.png"></el-image>
+                            </div>
+                            其中，A称为权值，设为n^2，v表示t时刻的输出状态V(t)矩阵的元素。
+                            <br />
+                            （4）	由一阶欧拉方法更新神经网络下一个时刻的输入状态：
+                            <div class="div_image">
+                                <el-image key="intro5-4" src="images/intro5-4.png"></el-image>
+                            </div>
+                            （5）	利用sigmoid函数更新神经网络下个时刻的输出状态：
+                            <div class="div_image">
+                                <el-image key="intro5-5" src="images/intro5-5.png"></el-image>
+                            </div>
+                            （6）	计算当前的能量函数E：
+                            <div class="div_image">
+                                <el-image key="intro5-6" src="images/intro5-6.png"></el-image>
+                            </div>
+                            其中，D也称为权值，设为n/2，f为遗传算法中提出的适应度函数。
+                            <br />
+                            （7）	检查当前神经网络的输出状态矩阵  ,判断是否满足神经元矩阵约束。
+                            <br />
+                            （8）	判断迭代是否完成，若未完成，跳转至（2），若完成，将最终得到的可行矩阵 转化为装箱序列，进而由装箱函数得到优化方案。
+                        </span>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-main>
+        </el-container>
+        <button class="am-btn btn_code" @click="codeChoose()">
+            算法源码&nbsp;&nbsp;&nbsp;<i class="el-icon-d-arrow-left code_btn_icon"></i>
+        </button>
+        <!-- 侧边栏内容 -->
+        <div id="code_2" class="am-offcanvas">
+            <div class="am-offcanvas-bar am-offcanvas-bar-flip" style="width:35%">
+                <div class="am-offcanvas-content">
+                    <p class="code_title">剩余空间最优化算法(RSO)源码</p>
+                    <pre class="line-numbers" style="border:0px;border-top:1px solid #606266"><code class="language-csharp">{{codeContent[0]}}</code></pre>
+                </div>
+            </div>
+        </div>
+        <div id="code_3" class="am-offcanvas">
+            <div class="am-offcanvas-bar am-offcanvas-bar-flip"  style="width:35%">
+                <div class="am-offcanvas-content">
+                    <p class="code_title">遗传算法(GA)源码</p>
+                        <pre class="line-numbers" style="border:0px;border-top:1px solid #606266"><code class="language-csharp">{{codeContent[1]}}</code></pre>
+                </div>
+            </div>
+        </div>
+        <div id="code_4" class="am-offcanvas">
+            <div class="am-offcanvas-bar am-offcanvas-bar-flip"  style="width:35%">
+                <div class="am-offcanvas-content">
+                    <p class="code_title">混合遗传模拟退火算法(HGSAA)源码</p>
+                    <pre class="line-numbers" style="border:0px;border-top:1px solid #606266"><code class="language-csharp">{{codeContent[2]}}</code></pre>
+                </div>
+            </div>
+        </div>
+        <div id="code_5" class="am-offcanvas">
+            <div class="am-offcanvas-bar am-offcanvas-bar-flip" style="width:35%">
+                <div class="am-offcanvas-content">
+                    <p class="code_title">连续HopField神经网络算法(CHNN)源码</p>
+                    <pre class="line-numbers" style="border:0px;border-top:1px solid #606266"><code class="language-csharp">{{codeContent[3]}}</code></pre>
+                </div>
+            </div>
+        </div>
+    </el-container>
+    <footer class="footer">
+        We recommend to use Google Chrome&nbsp;
+        <i class="fa fa-chrome"></i>.
+        <br />
+        © All Rights Reserved.
+    </footer>
+</body>
+</html>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+<script src="https://cdn.bootcss.com/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<script src="https://cdn.bootcss.com/amazeui/2.7.2/js/amazeui.min.js"></script>
+<script src="js/prism.js"></script>
+<script src="js/intro.js"></script>

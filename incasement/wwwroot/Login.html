@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>用户登录</title>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+    <!-- 引入样式 -->
+    <link href="https://cdn.bootcss.com/element-ui/2.8.2/theme-chalk/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/log.css" />
+    <!-- 引入组件库 -->
+    <script src="https://cdn.bootcss.com/element-ui/2.8.2/index.js"></script>
+</head>
+<body>
+    <div class="main1" v-cloak>
+        <img src="images/logo.png" /><font>基于多种优化算法的智能装箱系统</font>
+        <el-button type="danger" round @click="open">了解更多</el-button>
+    </div>
+    <div class="footer"></div>
+    <div class="main_img"><img src="images/logo.png" /></div>
+    <div class="Log main2" v-cloak>
+        <el-popover title="欢迎使用基于多种优化算法的智能装箱系统"
+                    placement="right-start"
+                    width="320"
+                    trigger="hover">
+            <div>
+                <i class="fa fa-paper-plane"></i>您可以通过我们提供的示例账户登录本系统。<br />
+                <i class="fa fa-paper-plane-o"></i><b>用户名：</b>user&nbsp;&nbsp;
+                <b>密码：</b>11&nbsp;
+                <el-button type="success" plain @click="inputAccount()" size="mini">一键输入</el-button>
+            </div>
+            <el-card shadow="hover" slot="reference">
+                <div slot="header" class="clearfix">
+                    <span><b>用户登录</b></span>
+                </div>
+                <el-form :model="logForm" status-icon :rules="rules2" ref="logForm">
+                    <el-form-item prop="user">
+                        <el-input id="text_userName" v-model="logForm.user" autocomplete="off" placeholder="用户名"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="pass">
+                        <el-input id="text_pwd" type="password" v-model="logForm.pass" autocomplete="off" placeholder="密码"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button id="btn_log" type="primary" @click="submitForm('logForm')">登录</el-button>
+                        <el-button id="btn_register" @click="openReg()">注册</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-card>
+        </el-popover>
+    </div>
+</body>
+</html>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+<script src="js/log.js"></script>
+
+
+

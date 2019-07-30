@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>方案中心</title>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+    <!-- 引入样式 -->
+    <link href="https://cdn.bootcss.com/element-ui/2.8.2/theme-chalk/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/userpage.css" />
+    <!-- 引入组件库 -->
+    <script src="https://cdn.bootcss.com/element-ui/2.8.2/index.js"></script>
+</head>
+<body>
+    <el-menu id="main2" default-active="4" class="el-menu-demo" mode="horizontal" v-cloak>
+        <el-menu-item index="1" class="guide_logo_item" @click="guidePath(0)"><img src="images/guide-logo.png" /></el-menu-item>
+        <el-menu-item index="2" @click="guidePath(1)">首页</el-menu-item>
+        <el-menu-item index="3" @click="guidePath(2)">功能介绍</el-menu-item>
+        <el-menu-item index="4" @click="guidePath(3)">方案中心</el-menu-item>
+        <el-submenu index="5" style="float:right">
+            <template slot="title">
+                欢迎您，{{getUserName()}}
+            </template>
+            <el-menu-item index="5-1" @click="guidePath(3)"><i class="fa fa-user-circle-o fa-lg"></i>&nbsp;&nbsp;方案中心</el-menu-item>
+            <el-menu-item index="5-2" @click="LogOut()"><i class="fa fa-power-off fa-lg"></i>&nbsp;&nbsp;&nbsp;退出登录</el-menu-item>
+        </el-submenu>
+    </el-menu>
+    <el-container id="main1" style="border: 1px solid #eee" v-cloak>
+        <el-header height="240">
+            <p>
+                <i class="fa fa-user-circle-o fa-3x"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                <font style="font-size: 30px;">{{getUserName()}}的方案中心</font>
+            </p>
+        </el-header>
+        <el-main style="background-color: #F5F4F4" v-loading="loading" element-loading-text="方案读取中"  element-loading-background="rgba(242, 242, 242, 0.8)">
+            <el-dialog title="删除方案"
+                       :visible.sync="centerDialogVisible1"
+                       width="30%"
+                       center>
+                <span style="text-align:center">确认删除该方案吗？</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="centerDialogVisible1 = false">取 消</el-button>
+                    <el-button type="danger" @click="delProgram(dig_index)">确 定</el-button>
+                </span>
+            </el-dialog>
+            <el-dialog title="修改方案名"
+                       :visible.sync="centerDialogVisible2"
+                       width="30%"
+                       center>
+                <el-form :model="rename" ref="rename" label-position="top" size="mini" :rules="rules" style="text-align:center" @submit.native.prevent>
+                    <el-form-item prop="name">
+                        <el-input v-model.number="rename.name" placeholder="修改方案名" autocomplete="off" style="text-align:center"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="updateProgramName('rename')">确定</el-button>
+                        <el-button @click="centerDialogVisible2 = false">取 消</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+            <el-row :gutter="20">
+                <el-col v-for="(p_item, index) in p_items" :xs="24" :sm="12" :md="12" :lg="8" :xl="6">
+                    <el-popover placement="top"
+                                title="方案详情"
+                                width="200"
+                                trigger="hover">
+                        <template>
+                            <span class="pc_title">方案名称：</span>&nbsp;<span class="pc_content">{{p_name[index]}}</span>
+                            <br />
+                            <span v-for="(p_ct,index_ct) in p_item.containers">
+                                <span class="pc_title">箱{{ index_ct+1 }}利用率：</span>&nbsp;<span class="pc_content">{{(p_ct.useratio*100).toFixed(2)}}%</span><br />
+                                <span class="pc_title">箱{{ index_ct+1 }}载重：</span>&nbsp;<span class="pc_content">{{p_ct.loadweight.toFixed(3)}}t/{{p_ct.weight.toFixed(3)}}t</span><br />
+                            </span>
+                            <el-divider></el-divider>
+                            具体货物类型与装箱信息，请前往
+                            <a href="/HOME/Index" style="color:#409EFF">首页</a>查看
+                        </template>
+                        <el-card slot="reference" shadow="hover" :id="'card'+index" style="background-color:#909399" body-style="background-color:#fff">
+                            <div slot="header" style="color:#fff">
+                                <span><i class="el-icon-tickets"></i>{{p_name[index]}}&nbsp;方案</span>
+                                <el-tooltip effect="light" content="删除该方案" placement="top">
+                                    <el-button circle style="float:right" type="danger" size="mini" @click="setdelDig(index)"><i class="el-icon-delete"></i></el-button>
+                                </el-tooltip>
+                                <i style="float:right">&nbsp;</i>
+                                <el-tooltip effect="light" content="修改方案名" placement="top">
+                                    <el-button circle style="float:right" type="warning" size="mini" @click="setrenameDig(index)"><i class="el-icon-edit"></i></el-button>
+                                </el-tooltip>
+                            </div>
+                            <div>
+                                <span class="pc_title">箱型:</span>
+                                <br />
+                                <span class="pc_content">
+                                    长:&nbsp;{{p_item.containers[0]._true_length}}mm
+                                    <el-divider direction="vertical"></el-divider>
+                                    宽:&nbsp;{{p_item.containers[0]._true_width}}mm
+                                    <el-divider direction="vertical"></el-divider>
+                                    高:&nbsp;{{p_item.containers[0]._true_height}}mm
+                                </span>
+                                <br />
+                                <span class="pc_title">配重:</span>&nbsp;<span class="pc_content">{{p_item.containers[0].weight}}t</span>
+                                <br />
+                                <span class="pc_title">所用算法:</span>&nbsp;<span class="pc_content">{{getOAtype(p_OAtype[index])}}</span>
+                                <br />
+                                <br />
+                                <el-timeline>
+                                    <el-timeline-item key="1" type="primary" color="#409EFF" size="normal" placement="top"
+                                                      timestamp="使用箱数">
+                                        {{p_item.Container_num}}个
+                                    </el-timeline-item>
+                                    <el-timeline-item key="2" type="primary" color="#E6A23C" size="normal" placement="top"
+                                                      timestamp="最大货箱利用率">
+                                        {{(p_item.containers[0].useratio*100).toFixed(2)}}%
+                                    </el-timeline-item>
+                                    <el-timeline-item key="3" type="primary" color="#67C23A" size="normal" placement="top"
+                                                      timestamp="最大货箱载重率">
+                                        {{((p_item.containers[0].loadweight/p_item.containers[0].weight)*100).toFixed(2)}}%
+                                    </el-timeline-item>
+                                </el-timeline>
+                                <div style="font-size:12px;text-align:right;border-top:1px solid #DCDFE6;padding-top:2px">
+                                    <i class="el-icon-collection-tag"></i>创建于:{{p_date[index]}}
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-popover>
+                </el-col>
+            </el-row>
+        </el-main>
+    </el-container>
+    <footer class="footer">
+        We recommend to use Google Chrome&nbsp;
+        <i class="fa fa-chrome"></i>.
+        <br />
+        © All Rights Reserved.
+    </footer>
+</body>
+</html>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+<script src="js/userpage.js"></script>
